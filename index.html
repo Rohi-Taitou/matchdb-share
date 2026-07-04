@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchDB — cfDNA + Methylation Datasets</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <h1>MatchDB <span class="subtitle">matched cfDNA + methylation datasets</span></h1>
+            <div class="status-indicator">
+                <span id="total-count" class="pill">0 datasets</span>
+                <span id="snapshot" class="pill"></span>
+            </div>
+        </header>
+
+        <div class="body">
+            <aside class="filters">
+                <h2>Filters</h2>
+                <label>Search<input type="text" id="f-q" placeholder="title / accession..."></label>
+                <label>Cancer type<input type="text" id="f-cancer" placeholder="e.g. lung"></label>
+                <label>Assay<input type="text" id="f-assay" placeholder="e.g. cfMeDIP"></label>
+                <label>Min cohort<input type="number" id="f-cohort" min="0" placeholder="0"></label>
+                <label>Source<select id="f-source"><option value="">any</option></select></label>
+                <label>Match type<select id="f-match"><option value="">any</option></select></label>
+                <label>Access<select id="f-access"><option value="">any</option></select></label>
+                <label class="check"><input type="checkbox" id="f-cfdna"> has cfDNA</label>
+                <label class="check"><input type="checkbox" id="f-meth"> has methylation</label>
+                <label>Stage<input type="text" id="f-stage" placeholder="e.g. III/IV"></label>
+                <label>Treatment<input type="text" id="f-treatment" placeholder="e.g. chemo"></label>
+                <label>Meth. assay<input type="text" id="f-methassay" placeholder="e.g. WGBS"></label>
+                <label class="check"><input type="checkbox" id="f-timeseries"> time-series</label>
+                <label class="check"><input type="checkbox" id="f-cfdnaconc"> has cfDNA conc.</label>
+                <button id="apply-btn">Apply</button>
+                <button id="reset-btn" class="secondary">Reset</button>
+                <div id="facets" class="facets"></div>
+            </aside>
+
+            <main class="results">
+                <table id="datasets">
+                    <thead>
+                        <tr>
+                            <th data-sort="title">Title</th>
+                            <th data-sort="first_author">Author</th>
+                            <th>Source</th>
+                            <th>Accessions</th>
+                            <th>Cancer</th>
+                            <th data-sort="cohort_size">Cohort</th>
+                            <th>Assay</th>
+                            <th>Meth. assay</th>
+                            <th>Stage</th>
+                            <th>Treatment</th>
+                            <th>Time-series</th>
+                            <th data-sort="avg_reads">Avg reads</th>
+                            <th data-sort="cfdna_concentration_ng_ml">cfDNA ng/mL</th>
+                            <th>Match</th>
+                            <th>Access</th>
+                            <th data-sort="year">Year</th>
+                            <th>Link</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
