@@ -110,6 +110,24 @@ function section(title, counts, labels = {}) {
   const items = Object.entries(counts || {}).map(([k, n]) => `<li><span>${labels[k] || k}</span><b>${n}</b></li>`).join("");
   return items ? `<div class="facet-group"><h4>${title}</h4><ul>${items}</ul></div>` : "";
 }
+// Per cancer type: number of studies + total n summed across those studies
+// (per-study n = cancer-sample count, else cohort size, else sample count).
+function cancerTotals(datasets) {
+  const agg = {};
+  for (const d of datasets) {
+    const n = d.n_cancer || d.cohort_size || d.sample_count || 0;
+    for (const ct of (d.cancer_type && d.cancer_type.length ? d.cancer_type : ["(unspecified)"])) {
+      (agg[ct] ||= { studies: 0, sumN: 0 }).studies++;
+      agg[ct].sumN += n;
+    }
+  }
+  return Object.entries(agg).sort((a, b) => b[1].sumN - a[1].sumN);
+}
+function cancerSection(datasets) {
+  const rows = cancerTotals(datasets).map(([ct, v]) =>
+    `<li><span>${ct}</span><b title="total patients summed across ${v.studies} stud${v.studies === 1 ? "y" : "ies"}">${v.sumN.toLocaleString()} <em>n</em> · ${v.studies}×</b></li>`).join("");
+  return rows ? `<div class="facet-group"><h4>Cancer types — total n</h4><ul class="cancer-n">${rows}</ul></div>` : "";
+}
 
 async function main() {
   const [datasets, meta] = await Promise.all([
@@ -124,7 +142,7 @@ async function main() {
   $("facets").innerHTML = `<h3>Overview (${meta.total ?? ALL.length})</h3>` +
     section("By source", f.source) +
     section("By match type", f.match_type, MATCH_LABELS) +
-    section("Top cancers", f.cancer_type);
+    cancerSection(ALL);
   if (meta.generated) $("snapshot").textContent = `snapshot ${meta.generated}`;
   render();
 }
